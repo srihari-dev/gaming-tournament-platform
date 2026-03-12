@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Player Dashboard')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container mt-4">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2><i class="bi bi-joystick"></i> Welcome, <span th:text="${player.gamerTag}">Player</span>!</h2>
+                    <p class="mb-0">Ranking Points: <strong th:text="${player.rankingPoints}">0</strong></p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a th:href="@{/player/notifications}" class="btn btn-light position-relative">
+                        <i class="bi bi-bell"></i> Notifications
+                        <span th:if="${unreadCount > 0}" class="badge bg-danger ms-1" th:text="${unreadCount}">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- My Tournaments -->
+            <div class="col-md-7 mb-4">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="bi bi-trophy"></i> My Registrations</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(registrations)}" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                            <p>You haven't joined any tournaments yet.</p>
+                            <a th:href="@{/player/tournaments}" class="btn btn-primary btn-sm">Browse Tournaments</a>
+                        </div>
+                        <div class="table-responsive" th:unless="${#lists.isEmpty(registrations)}">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Tournament</th>
+                                        <th>Game</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="reg : ${registrations}">
+                                        <td th:text="${reg.tournament.name}">Tournament</td>
+                                        <td th:text="${reg.tournament.gameTitle}">Game</td>
+                                        <td>
+                                            <span class="badge" th:classappend="${'badge-' + reg.tournament.status.name().toLowerCase()}"
+                                                  th:text="${reg.tournament.status}">Status</span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/player/tournaments/{id}(id=${reg.tournament.tournamentId})}"
+                                               class="btn btn-sm btn-outline-primary">View</a>
+                                            <a th:if="${reg.tournament.status.name() == 'ONGOING'}"
+                                               th:href="@{/player/standings/{id}(id=${reg.tournament.tournamentId})}"
+                                               class="btn btn-sm btn-outline-success">Standings</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Tournaments -->
+            <div class="col-md-5 mb-4">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Upcoming Tournaments</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(upcomingTournaments)}" class="text-center text-muted py-4">
+                            <p>No upcoming tournaments.</p>
+                        </div>
+                        <div th:each="t : ${upcomingTournaments}" class="card tournament-card upcoming mb-2">
+                            <div class="card-body py-2 px-3">
+                                <h6 class="mb-1" th:text="${t.name}">Tournament</h6>
+                                <small class="text-muted">
+                                    <i class="bi bi-controller"></i> <span th:text="${t.gameTitle}">Game</span> |
+                                    <i class="bi bi-people"></i> Team Size: <span th:text="${t.teamSize}">1</span> |
+                                    <i class="bi bi-trophy"></i> $<span th:text="${t.prizePool}">0</span>
+                                </small>
+                                <div class="mt-1">
+                                    <a th:href="@{/player/tournaments/{id}(id=${t.tournamentId})}"
+                                       class="btn btn-sm btn-primary">Join Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Organizer Dashboard')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container mt-4">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2><i class="bi bi-clipboard-check"></i> Organizer Dashboard</h2>
+                    <p class="mb-0">Organization: <strong th:text="${organizer.organizationName}">Org</strong></p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a th:href="@{/organizer/tournaments/create}" class="btn btn-light">
+                        <i class="bi bi-plus-circle"></i> Create Tournament
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card">
+                    <div class="stat-number" th:text="${tournaments.size()}">0</div>
+                    <div class="stat-label">Total Tournaments</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card green">
+                    <div class="stat-number" th:text="${tournaments.stream().filter(t -> t.status.name() == 'ONGOING').count()}">0</div>
+                    <div class="stat-label">Ongoing</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card blue">
+                    <div class="stat-number" th:text="${tournaments.stream().filter(t -> t.status.name() == 'COMPLETED').count()}">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tournaments List -->
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-trophy"></i> My Tournaments</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(tournaments)}" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                    <p>No tournaments created yet.</p>
+                    <a th:href="@{/organizer/tournaments/create}" class="btn btn-primary">Create Your First Tournament</a>
+                </div>
+                <div class="table-responsive" th:unless="${#lists.isEmpty(tournaments)}">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Game</th>
+                                <th>Format</th>
+                                <th>Status</th>
+                                <th>Prize Pool</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="t : ${tournaments}">
+                                <td th:text="${t.name}">Tournament</td>
+                                <td th:text="${t.gameTitle}">Game</td>
+                                <td th:text="${t.format}">Format</td>
+                                <td>
+                                    <span class="badge" th:classappend="${'badge-' + t.status.name().toLowerCase()}"
+                                          th:text="${t.status}">Status</span>
+                                </td>
+                                <td>$<span th:text="${t.prizePool}">0</span></td>
+                                <td>
+                                    <a th:href="@{/organizer/tournaments/{id}(id=${t.tournamentId})}"
+                                       class="btn btn-sm btn-outline-primary">Manage</a>
+                                    <a th:href="@{/organizer/tournaments/{id}/report(id=${t.tournamentId})}"
+                                       class="btn btn-sm btn-outline-secondary">Report</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>

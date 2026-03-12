@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container mt-4">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h2><i class="bi bi-shield-check"></i> Admin Dashboard</h2>
+            <p class="mb-0">System Overview &amp; Management</p>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card">
+                    <div class="stat-number" th:text="${userCount}">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card green">
+                    <div class="stat-number" th:text="${tournamentCount}">0</div>
+                    <div class="stat-label">Total Tournaments</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card blue">
+                    <div class="stat-number" th:text="${ongoingCount}">0</div>
+                    <div class="stat-label">Ongoing Tournaments</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stat-card pink">
+                    <div class="stat-number" th:text="${completedMatches}">0</div>
+                    <div class="stat-label">Completed Matches</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-people" style="font-size: 2.5rem; color: #6c5ce7;"></i>
+                        <h5 class="mt-2">Manage Users</h5>
+                        <p class="text-muted">View, suspend, or delete user accounts</p>
+                        <a th:href="@{/admin/users}" class="btn btn-primary">Go to Users</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-trophy" style="font-size: 2.5rem; color: #00cec9;"></i>
+                        <h5 class="mt-2">View Tournaments</h5>
+                        <p class="text-muted">Monitor all tournaments in the system</p>
+                        <a th:href="@{/admin/tournaments}" class="btn btn-primary">Go to Tournaments</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-bar-chart" style="font-size: 2.5rem; color: #fd79a8;"></i>
+                        <h5 class="mt-2">Reports &amp; Analytics</h5>
+                        <p class="text-muted">View system statistics and reports</p>
+                        <a th:href="@{/admin/reports}" class="btn btn-primary">Go to Reports</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <script th:replace="~{fragments/layout :: scripts}"></script>
+</body>
+</html>
