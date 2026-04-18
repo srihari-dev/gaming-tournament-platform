@@ -2,7 +2,7 @@ package com.tournament.controller;
 
 import com.tournament.model.User;
 import com.tournament.model.enums.TournamentStatus;
-import com.tournament.service.TournamentService;
+import com.tournament.service.contracts.AdminTournamentOperations;
 import com.tournament.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,9 +16,9 @@ import java.util.List;
 public class AdminController {
 
     private final UserService userService;
-    private final TournamentService tournamentService;
+    private final AdminTournamentOperations tournamentService;
 
-    public AdminController(UserService userService, TournamentService tournamentService) {
+    public AdminController(UserService userService, AdminTournamentOperations tournamentService) {
         this.userService = userService;
         this.tournamentService = tournamentService;
     }

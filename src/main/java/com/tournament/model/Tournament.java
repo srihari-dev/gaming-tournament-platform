@@ -53,6 +53,54 @@ public class Tournament {
 
     public Tournament() {}
 
+    /**
+     * GRASP Creator: Tournament owns and creates registrations for itself,
+     * while enforcing registration rules in one cohesive place.
+     */
+    public Registration createRegistration(Player player, Team team, LocalDate onDate) {
+        validateRegistrationRules(player, team, onDate);
+
+        Registration registration = new Registration(this, team, player);
+        registration.setRegistrationDate(onDate);
+        registration.approveByTournamentRules();
+        registrations.add(registration);
+        return registration;
+    }
+
+    public boolean isRegistrationOpenOn(LocalDate date) {
+        return date != null
+            && registrationStart != null
+            && registrationEnd != null
+            && !date.isBefore(registrationStart)
+            && !date.isAfter(registrationEnd);
+    }
+
+    private void validateRegistrationRules(Player player, Team team, LocalDate onDate) {
+        if (player == null) {
+            throw new IllegalArgumentException("Player is required for registration");
+        }
+        if (status != TournamentStatus.UPCOMING) {
+            throw new IllegalArgumentException("Registration is only allowed while tournament is upcoming");
+        }
+        if (!isRegistrationOpenOn(onDate)) {
+            throw new IllegalArgumentException("Registration window is closed");
+        }
+        if (team == null) {
+            throw new IllegalArgumentException("Team is required for registration");
+        }
+        if (team.getMembers() == null || team.getMembers().size() != teamSize) {
+            throw new IllegalArgumentException("Team member count must match tournament team size");
+        }
+
+        boolean alreadyRegistered = registrations.stream()
+            .anyMatch(r -> r.getPlayer() != null
+                && r.getPlayer().getUserId() != null
+                && r.getPlayer().getUserId().equals(player.getUserId()));
+        if (alreadyRegistered) {
+            throw new IllegalArgumentException("Player already registered for this tournament");
+        }
+    }
+
     // Getters and Setters
     public Integer getTournamentId() { return tournamentId; }
     public void setTournamentId(Integer tournamentId) { this.tournamentId = tournamentId; }

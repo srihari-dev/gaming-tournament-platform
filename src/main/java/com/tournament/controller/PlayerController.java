@@ -1,11 +1,10 @@
 package com.tournament.controller;
 
 import com.tournament.model.*;
-import com.tournament.model.enums.RegistrationStatus;
 import com.tournament.model.enums.TournamentStatus;
 import com.tournament.repository.PlayerRepository;
 import com.tournament.service.NotificationService;
-import com.tournament.service.TournamentService;
+import com.tournament.service.contracts.PlayerTournamentOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +17,11 @@ import java.util.List;
 @RequestMapping("/player")
 public class PlayerController {
 
-    private final TournamentService tournamentService;
+    private final PlayerTournamentOperations tournamentService;
     private final NotificationService notificationService;
     private final PlayerRepository playerRepository;
 
-    public PlayerController(TournamentService tournamentService,
+    public PlayerController(PlayerTournamentOperations tournamentService,
                             NotificationService notificationService,
                             PlayerRepository playerRepository) {
         this.tournamentService = tournamentService;

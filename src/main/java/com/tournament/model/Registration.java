@@ -39,6 +39,32 @@ public class Registration {
         this.registrationDate = LocalDate.now();
     }
 
+    void approveByTournamentRules() {
+        transitionTo(RegistrationStatus.APPROVED);
+    }
+
+    void rejectByTournamentRules() {
+        transitionTo(RegistrationStatus.REJECTED);
+    }
+
+    private void transitionTo(RegistrationStatus nextStatus) {
+        if (nextStatus == null) {
+            throw new IllegalArgumentException("Registration status cannot be null");
+        }
+        if (status == nextStatus) {
+            return;
+        }
+
+        if (status != RegistrationStatus.PENDING) {
+            throw new IllegalStateException("Registration status transition is not allowed");
+        }
+        if (nextStatus != RegistrationStatus.APPROVED && nextStatus != RegistrationStatus.REJECTED) {
+            throw new IllegalStateException("Unsupported registration status transition");
+        }
+
+        this.status = nextStatus;
+    }
+
     // Getters and Setters
     public Integer getRegistrationId() { return registrationId; }
     public void setRegistrationId(Integer registrationId) { this.registrationId = registrationId; }
@@ -47,7 +73,6 @@ public class Registration {
     public void setRegistrationDate(LocalDate registrationDate) { this.registrationDate = registrationDate; }
 
     public RegistrationStatus getStatus() { return status; }
-    public void setStatus(RegistrationStatus status) { this.status = status; }
 
     public Tournament getTournament() { return tournament; }
     public void setTournament(Tournament tournament) { this.tournament = tournament; }

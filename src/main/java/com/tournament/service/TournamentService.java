@@ -1,8 +1,12 @@
 package com.tournament.service;
 
 import com.tournament.model.*;
+import com.tournament.model.builder.TournamentBuilder;
 import com.tournament.model.enums.*;
 import com.tournament.repository.*;
+import com.tournament.service.contracts.AdminTournamentOperations;
+import com.tournament.service.contracts.OrganizerTournamentOperations;
+import com.tournament.service.contracts.PlayerTournamentOperations;
 import com.tournament.service.observer.TournamentObserver;
 import com.tournament.service.strategy.BracketGenerationStrategy;
 import com.tournament.service.strategy.KnockoutBracketStrategy;
@@ -15,7 +19,9 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class TournamentService {
+public class TournamentService implements OrganizerTournamentOperations,
+    PlayerTournamentOperations,
+    AdminTournamentOperations {
 
     private final TournamentRepository tournamentRepository;
     private final RegistrationRepository registrationRepository;
@@ -50,7 +56,8 @@ public class TournamentService {
 
     // ---- Tournament CRUD ----
 
-    public Tournament createTournament(Tournament tournament, Organizer organizer) {
+    public Tournament createTournament(Organizer organizer, TournamentBuilder builder) {
+        Tournament tournament = builder.build();
         tournament.setOrganizer(organizer);
         tournament.setStatus(TournamentStatus.UPCOMING);
         return tournamentRepository.save(tournament);
@@ -92,8 +99,7 @@ public class TournamentService {
             team = teamRepository.save(team);
         }
 
-        Registration registration = new Registration(tournament, team, player);
-        registration.setStatus(RegistrationStatus.APPROVED); // Auto-approve
+        Registration registration = tournament.createRegistration(player, team, java.time.LocalDate.now());
         Registration saved = registrationRepository.save(registration);
 
         // Notify observers

@@ -1,9 +1,10 @@
 package com.tournament.controller;
 
 import com.tournament.model.*;
+import com.tournament.model.builder.TournamentBuilder;
 import com.tournament.model.enums.*;
 import com.tournament.repository.OrganizerRepository;
-import com.tournament.service.TournamentService;
+import com.tournament.service.contracts.OrganizerTournamentOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,10 +18,10 @@ import java.util.List;
 @RequestMapping("/organizer")
 public class OrganizerController {
 
-    private final TournamentService tournamentService;
+    private final OrganizerTournamentOperations tournamentService;
     private final OrganizerRepository organizerRepository;
 
-    public OrganizerController(TournamentService tournamentService,
+    public OrganizerController(OrganizerTournamentOperations tournamentService,
                                OrganizerRepository organizerRepository) {
         this.tournamentService = tournamentService;
         this.organizerRepository = organizerRepository;
@@ -59,17 +60,16 @@ public class OrganizerController {
                                    RedirectAttributes redirectAttributes) {
         try {
             Organizer organizer = getCurrentOrganizer(auth);
-            Tournament tournament = new Tournament();
-            tournament.setName(name);
-            tournament.setGameTitle(gameTitle);
-            tournament.setFormat(format);
-            tournament.setTeamSize(teamSize);
-            tournament.setRegistrationStart(LocalDate.parse(registrationStart));
-            tournament.setRegistrationEnd(LocalDate.parse(registrationEnd));
-            tournament.setPrizePool(prizePool);
-            tournament.setRules(rules);
+            TournamentBuilder builder = TournamentBuilder.create()
+                .withName(name)
+                .withGameTitle(gameTitle)
+                .withFormat(format)
+                .withTeamSize(teamSize)
+                .withRegistrationWindow(LocalDate.parse(registrationStart), LocalDate.parse(registrationEnd))
+                .withPrizePool(prizePool)
+                .withRules(rules);
 
-            tournamentService.createTournament(tournament, organizer);
+            tournamentService.createTournament(organizer, builder);
             redirectAttributes.addFlashAttribute("success", "Tournament created successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
